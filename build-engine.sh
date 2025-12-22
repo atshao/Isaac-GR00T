@@ -34,4 +34,7 @@ docker run \
     -v ${ONNX_PATH}:/workspace/Isaac-GR00T/gr00t_onnx \
     -v ${ENGINE_PATH}:/workspace/Isaac-GR00T/gr00t_engine \
     isaac-gr00t-n1.5:l4t-jp6.2 \
-    bash deployment_scripts/build_engine.sh
+bash -c " \
+bash deployment_scripts/build_engine.sh; \
+chown -R 1000:1000 /workspace/Isaac-GR00T/gr00t_engine \
+"
