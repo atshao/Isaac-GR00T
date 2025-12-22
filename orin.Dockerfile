@@ -44,7 +44,8 @@ COPY pyproject.toml .
 RUN export PIP_INDEX_URL=https://pypi.jetson-ai-lab.io/jp6/cu126 && \
     export PIP_TRUSTED_HOST=pypi.jetson-ai-lab.io && \
     pip3 install --upgrade pip setuptools && \
-    pip3 install -e .[orin]
+    pip3 install -e .[orin] nvidia-modelopt && \
+    pip3 install "git+https://github.com/facebookresearch/pytorch3d.git" --no-build-isolation
 
 # Build and install decord
 RUN git clone https://git.ffmpeg.org/ffmpeg.git && \
@@ -61,7 +62,12 @@ RUN git clone https://git.ffmpeg.org/ffmpeg.git && \
     make && \
     cd ../python && \
     python3 setup.py install --user && \
+    cd ../../ && \
     rm -rf ffmpeg decord
 
 # Set decord library path environment variable
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/root/.local/decord/
+
+# Set NVIDIA driver capabilities
+ENV NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute,video
+
