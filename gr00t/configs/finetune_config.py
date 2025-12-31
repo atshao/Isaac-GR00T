@@ -1,5 +1,6 @@
 # Finetune config used for single node post-training.
 from dataclasses import dataclass
+from typing import Literal
 
 from gr00t.data.embodiment_tags import EmbodimentTag
 
@@ -116,3 +117,6 @@ class FinetuneConfig:
 
     num_shards_per_epoch: int = int(1e5)
     """Number of shards to use for the dataset. reduce this number if vram is limited."""
+
+    video_backend: Literal["torchcodec", "decord", "torchvision_av"] = "torchcodec"
+    """ Video backend to use."""

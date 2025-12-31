@@ -1,6 +1,7 @@
 FROM nvcr.io/nvidia/pytorch:25.04-py3
 
-ENV NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute
+ENV NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute,video
+ENV MAX_JOBS=4
 
 RUN apt-get update && apt-get install -y \
     build-essential yasm cmake libtool git pkg-config \
@@ -17,7 +18,13 @@ RUN cd /opt && git clone https://github.com/facebookresearch/pytorch3d.git
 RUN cd /opt/pytorch3d && pip install .
 
 COPY src/gr00t/ /workspace/gr00t/
-RUN cd /workspace/gr00t && uv sync && uv pip install -e .
+RUN cd /workspace/gr00t/gr00t && \
+    ln -sf ../scripts/deployment/standalone_inference_script.py .
+WORKDIR /workspace/gr00t
+
+RUN uv sync --extra tensorrt && uv pip install -e . && \
+    uv pip install torch==2.8.0 torchvision==0.23.0 decord && \
+    uv pip install flash-attn==2.8.2 --no-build-isolation
 
 RUN apt-get install -y libegl1
 RUN mkdir -p /usr/share/glvnd/egl_vendor.d && \

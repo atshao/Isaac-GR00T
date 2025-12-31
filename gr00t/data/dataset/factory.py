@@ -39,13 +39,14 @@ class DatasetFactory:
                 assert embodiment_tag is not None, "Embodiment tag is required"
                 assert self.config.data.mode == "single_turn", "Only single turn mode is supported"
                 if torch.distributed.is_initialized():
+                    torch.distributed.barrier()
                     if torch.distributed.get_rank() == 0:
                         generate_stats(dataset_path)
                         generate_rel_stats(dataset_path, EmbodimentTag(embodiment_tag))
                 else:
                     generate_stats(dataset_path)
                     generate_rel_stats(dataset_path, EmbodimentTag(embodiment_tag))
-                torch.distributed.barrier()
+
                 dataset = ShardedSingleStepDataset(
                     dataset_path=dataset_path,
                     embodiment_tag=EmbodimentTag(embodiment_tag),

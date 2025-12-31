@@ -49,6 +49,12 @@ class ServerConfig:
     use_sim_policy_wrapper: bool = False
     """Whether to use the sim policy wrapper"""
 
+    use_tensorrt: bool = False
+    """Whether to use TensorRT engine"""
+
+    trt_engine_path: str = "./groot_n1d6_onnx/dit_model_bf16.trt"
+    """Path to TensorRT engine file. Used only when --use-tensorrt is given."""
+
 
 def main(config: ServerConfig):
     print("Starting GR00T inference server...")
@@ -92,6 +98,10 @@ def main(config: ServerConfig):
         from gr00t.policy.gr00t_policy import Gr00tSimPolicyWrapper
 
         policy = Gr00tSimPolicyWrapper(policy)
+
+    if config.use_tensorrt:
+        from gr00t.standalone_inference_script import replace_dit_with_tensorrt
+        replace_dit_with_tensorrt(policy, config.trt_engine_path)
 
     server = PolicyServer(
         policy=policy,

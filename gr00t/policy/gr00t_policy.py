@@ -77,6 +77,7 @@ class Gr00tPolicy(BasePolicy):
 
         super().__init__(strict=strict)
         model_dir = Path(model_path)
+        processor_dir = model_dir / "processor"
 
         # Load the pretrained model and move to target device with bfloat16 precision
         model = AutoModel.from_pretrained(model_dir)
@@ -85,7 +86,7 @@ class Gr00tPolicy(BasePolicy):
         self.model = model
 
         # Load the processor for input/output transformation
-        self.processor: BaseProcessor = AutoProcessor.from_pretrained(model_dir)
+        self.processor: BaseProcessor = AutoProcessor.from_pretrained(processor_dir)
         self.processor.eval()
 
         # Store embodiment-specific configurations
