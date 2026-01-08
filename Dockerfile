@@ -1,4 +1,11 @@
-FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel
+FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu22.04
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-dev
+    
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONPATH=/workspace:${PYTHONPATH}
 
@@ -24,7 +31,7 @@ COPY pyproject.toml .
 RUN pip install -e .[base]
 # There's a conflict in the native python, so we have to resolve it by
 RUN pip uninstall -y transformer-engine
-RUN pip install flash_attn==2.7.1.post4 -U --force-reinstall --no-build-isolation
+RUN pip install flash_attn==2.8.2 -U --force-reinstall --no-build-isolation
 # Clean any existing OpenCV installations
 RUN pip uninstall -y opencv-python opencv-python-headless || true
 RUN rm -rf /usr/local/lib/python3.10/dist-packages/cv2 || true
@@ -38,4 +45,5 @@ RUN pip install -e . --no-deps
 RUN pip install accelerate>=0.26.0
 COPY gr00t /workspace/gr00t
 COPY Makefile /workspace/Makefile
-RUN pip3 install -e .
+RUN pip install -e .
+RUN pip install nvidia-modelopt
