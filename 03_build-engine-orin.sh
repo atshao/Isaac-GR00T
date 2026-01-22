@@ -36,5 +36,5 @@ docker run \
     isaac-gr00t-n1.5:l4t-jp6.2 \
 bash -c " \
 bash deployment_scripts/build_engine.sh; \
-chown -R 1000:1000 /workspace/Isaac-GR00T/gr00t_engine \
+chown -R $(id- u):$(id- g) /workspace/Isaac-GR00T/gr00t_engine \
 "
